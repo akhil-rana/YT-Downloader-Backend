@@ -6,20 +6,13 @@ const ytdl = require("ytdl-core");
 const express = require("express");
 const ffmpeg = require("fluent-ffmpeg");
 const app = express();
-const readline = require("readline-sync");
+// const readline = require("readline-sync");
 const PORT = 8080;
 let title = null;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// Serve only the static files form the dist directory
-app.use(express.static(__dirname + "/front"));
-
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname + "/front/index.html"));
-});
 
 var server = app.listen(process.env.PORT || 8080, () =>
   console.log("App listening on port " + PORT)
@@ -142,10 +135,10 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
           console.log("Audio file was deleted");
         });
         title1 = encodeURIComponent(title);
-        app.get("/" + title1 + ".mkv", (req, res) =>
+        app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
         );
-        res.send("Download from: " + "/" + title1+ ".mkv");
+        res.send("Download from: " + "/download/" + title1+ ".mkv");
       })
       .save("./downloads/" + title + ".mkv");
   });
