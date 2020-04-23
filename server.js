@@ -103,7 +103,7 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
   let afile = fs.createWriteStream("./downloads/audio." + aformat);
   downloaded = false;
-
+  res.send("Started");
   let vdown = new Promise(function (resolve, reject) {
     https.get(vurl, function (response) {
       let vstream = response.pipe(vfile);
@@ -144,7 +144,7 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
         app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
         );
-        res.send("/download/" + title1 + ".mkv");
+
       })
       .save("./downloads/" + title + ".mkv");
   });
