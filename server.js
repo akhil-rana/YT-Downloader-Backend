@@ -157,8 +157,12 @@ function checkDownloadProgress(res) {
   let title1 = encodeURIComponent(title);
   request(
     {
-      url: "https://cors-anywhere.herokuapp.com/"+vurl,
+      url: vurl,
       method: "HEAD",
+      headers: {
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'access-control-allow-origin',
+      }
     },
     function (err, response, body) {
       console.log(response.headers);
