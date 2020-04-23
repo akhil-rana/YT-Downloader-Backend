@@ -18,11 +18,11 @@ app.use(bodyParser.json());
 // Serve only the static files form the dist directory
 app.use(express.static(__dirname + "/front"));
 
-app.get("/", function (req, res) {
+app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname + "/front/index.html"));
 });
 
-var server = app.listen(process.env.PORT || 8080, () =>
+app.listen(process.env.PORT || 8080, () =>
   console.log("App listening on port " + PORT)
 );
 
