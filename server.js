@@ -157,11 +157,11 @@ function checkDownloadProgress(res) {
   let title1 = encodeURIComponent(title);
   request(
     {
-      url: vurl,
+      url: "https://cors-anywhere.herokuapp.com/"+vurl,
       method: "HEAD",
     },
     function (err, response, body) {
-      console.log(response.headers.content-lenght);
+      console.log(response.headers.content-length);
     }
   );
 }
