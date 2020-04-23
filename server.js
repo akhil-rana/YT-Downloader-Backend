@@ -31,7 +31,6 @@ app.post("/urlstart", (req, res) => {
   console.log(url);
   youtubeStart(url, res);
 });
-downloadP();
 app.post("/video", (req, res) => {
   let aurl = req.body.aurl;
   let vurl = req.body.vurl;
@@ -150,51 +149,4 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
       })
       .save("./downloads/" + title + ".mkv");
   });
-}
-
-async function downloadP() {
-  const browser = await puppeteer.launch({
-    headless: false,
-    ignoreDefaultArgs: ["--disable-extensions"],
-    args: ["--no-sandbox"],
-  });
-  const page = await browser.newPage();
-  await page.goto("https://example.com");
-  await page.screenshot({
-    path: "example.png",
-  });
-  await browser.close();
-  //     const page = await browser.newPage();
-  //     await page
-  //       .goto(vurl, {
-  //         waitUntil: "networkidle2",
-  //       })
-  //       .then((response) => {
-  //         console.log(response);
-  //       });
-  //     browser.close();
-  //     return;
-  //     const filename = "output.mkv";
-  //     const dir = "./downloads/";
-
-  // // Download and wait for download
-  //     await Promise.all([
-  //         page.click('#DownloadFile'),
-  //        // Event on all responses
-  //         page.on('response', response => {
-  //             // If response has a file on it
-  //             if (response._headers['content-disposition'] === `attachment;filename=${filename}`) {
-  //                // Get the size
-  //                 console.log('Size del header: ', response._headers['content-length']);
-  //                 // Watch event on download folder or file
-  //                  fs.watchFile(dir, function (curr, prev) {
-  //                    // If current size eq to size from response then close
-  //                     if (parseInt(curr.size) === parseInt(response._headers['content-length'])) {
-  //                         browser.close();
-  //                         this.close();
-  //                     }
-  //                 });
-  //             }
-  //         })
-  //     ]);
 }
