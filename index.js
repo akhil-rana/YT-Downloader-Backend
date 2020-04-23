@@ -85,8 +85,14 @@ function downloadFile(name, url, formats) {
       })
       .on("end", function () {
         console.log("Processing finished !");
-        fs.unlink("./video." + formats[Number(vinput - 1)]);
-        fs.unlink("./audio." + formats[Number(ainput - 1)]);
+        fs.unlink("./video." + formats[Number(vinput - 1)], (err) => {
+          if (err) throw err;
+          console.log('Video file was deleted');
+        });
+        fs.unlink("./audio." + formats[Number(ainput - 1)],  (err) => {
+          if (err) throw err;
+          console.log('Audio file was deleted');
+        });
       })
       .save("./output.mkv");
   });
