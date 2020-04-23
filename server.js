@@ -7,6 +7,7 @@ const express = require("express");
 const ffmpeg = require("fluent-ffmpeg");
 const puppeteer = require("puppeteer");
 const app = express();
+const path = require("path");
 const readline = require("readline-sync");
 const PORT = 8080;
 let title = null;
