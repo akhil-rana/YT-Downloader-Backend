@@ -32,7 +32,7 @@ app.post("/video", (req, res) => {
   downloadFile(aurl, vurl, aformat, vformat, res);
 });
 
-app.post("/check", (req, res) => {
+app.get("/check", (req, res) => {
   checkDownloadProgress(res);
 });
 
