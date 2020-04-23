@@ -32,7 +32,7 @@ app.post("/video", (req, res) => {
   vurl = req.body.vurl;
   aformat = req.body.aformat;
   vformat = req.body.vformat;
-  downloadFile(aurl, vurl, aformat, vformat, res);
+  downloadFile(aurl, vurl, res);
 });
 
 app.get("/check", (req, res) => {
@@ -103,6 +103,14 @@ function showDetails(info, res) {
 }
 
 function downloadFile(aurl, vurl, res) {
+  fs.unlink("./downloads/video." + vformat, (err) => {
+    if (err) throw err;
+    console.log("Video file was deleted");
+  });
+  fs.unlink("./downloads/audio." + aformat, (err) => {
+    if (err) throw err;
+    console.log("Audio file was deleted");
+  });
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
   let afile = fs.createWriteStream("./downloads/audio." + aformat);
 
@@ -135,14 +143,6 @@ function downloadFile(aurl, vurl, res) {
       .on("end", function () {
         console.log("Processing finished !");
 
-        fs.unlink("./downloads/video." + vformat, (err) => {
-          if (err) throw err;
-          console.log("Video file was deleted");
-        });
-        fs.unlink("./downloads/audio." + aformat, (err) => {
-          if (err) throw err;
-          console.log("Audio file was deleted");
-        });
         title1 = encodeURIComponent(title);
         app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
