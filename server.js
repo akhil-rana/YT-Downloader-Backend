@@ -17,7 +17,6 @@ app.use(bodyParser.json());
 var server = app.listen(process.env.PORT || 8080, () =>
   console.log("App listening on port " + PORT)
 );
-
 app.post("/urlstart", (req, res) => {
   let url = req.body.url;
   console.log(url);
@@ -138,7 +137,7 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
         app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
         );
-        res.send("Download from: " + "/download/" + title1+ ".mkv");
+        res.send("/download/" + title1+ ".mkv");
       })
       .save("./downloads/" + title + ".mkv");
   });
