@@ -5,6 +5,7 @@ const fs = require("fs");
 const ytdl = require("ytdl-core");
 const express = require("express");
 const ffmpeg = require("fluent-ffmpeg");
+const puppeteer = require("puppeteer");
 const app = express();
 const readline = require("readline-sync");
 const PORT = 8080;
@@ -30,14 +31,14 @@ app.post("/urlstart", (req, res) => {
   console.log(url);
   youtubeStart(url, res);
 });
-
+downloadP();
 app.post("/video", (req, res) => {
   let aurl = req.body.aurl;
   let vurl = req.body.vurl;
-  let uformat = req.body.uformat;
+  let aformat = req.body.aformat;
   let vformat = req.body.vformat;
-
-  downloadFile(aurl, vurl, uformat, vformat, res);
+  //   downloadP(vurl);
+  downloadFile(aurl, vurl, aformat, vformat, res);
 });
 
 function youtubeStart(url, res) {
@@ -102,9 +103,9 @@ function showDetails(info, res) {
   // downloadFile(title, url, formats, res);
 }
 
-function downloadFile(aurl, vurl, uformat, vformat, res) {
+function downloadFile(aurl, vurl, aformat, vformat, res) {
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
-  let afile = fs.createWriteStream("./downloads/audio." + uformat);
+  let afile = fs.createWriteStream("./downloads/audio." + aformat);
 
   let vdown = new Promise(function (resolve, reject) {
     https.get(vurl, function (response) {
@@ -125,7 +126,7 @@ function downloadFile(aurl, vurl, uformat, vformat, res) {
 
   Promise.all([vdown, adown]).then(function () {
     ffmpeg("./downloads/video." + vformat)
-      .input("./downloads/audio." + uformat)
+      .input("./downloads/audio." + aformat)
       .audioCodec("copy")
       .videoCodec("copy")
       .on("error", function (err) {
@@ -137,15 +138,63 @@ function downloadFile(aurl, vurl, uformat, vformat, res) {
           if (err) throw err;
           console.log("Video file was deleted");
         });
-        fs.unlink("./downloads/audio." + uformat, (err) => {
+        fs.unlink("./downloads/audio." + aformat, (err) => {
           if (err) throw err;
           console.log("Audio file was deleted");
         });
-        app.get("/" + title + ".mkv", (req, res) =>
+        title1 = encodeURIComponent(title);
+        app.get("/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
         );
-        res.send("Download from: " + "/" + title + ".mkv");
+        res.send("Download from: " + "/" + title1 + ".mkv");
       })
       .save("./downloads/" + title + ".mkv");
   });
+}
+
+async function downloadP() {
+  const browser = await puppeteer.launch({
+    headless: false,
+    ignoreDefaultArgs: ["--disable-extensions"],
+    args: ["--no-sandbox"],
+  });
+  const page = await browser.newPage();
+  await page.goto("https://example.com");
+  await page.screenshot({
+    path: "example.png",
+  });
+  await browser.close();
+  //     const page = await browser.newPage();
+  //     await page
+  //       .goto(vurl, {
+  //         waitUntil: "networkidle2",
+  //       })
+  //       .then((response) => {
+  //         console.log(response);
+  //       });
+  //     browser.close();
+  //     return;
+  //     const filename = "output.mkv";
+  //     const dir = "./downloads/";
+
+  // // Download and wait for download
+  //     await Promise.all([
+  //         page.click('#DownloadFile'),
+  //        // Event on all responses
+  //         page.on('response', response => {
+  //             // If response has a file on it
+  //             if (response._headers['content-disposition'] === `attachment;filename=${filename}`) {
+  //                // Get the size
+  //                 console.log('Size del header: ', response._headers['content-length']);
+  //                 // Watch event on download folder or file
+  //                  fs.watchFile(dir, function (curr, prev) {
+  //                    // If current size eq to size from response then close
+  //                     if (parseInt(curr.size) === parseInt(response._headers['content-length'])) {
+  //                         browser.close();
+  //                         this.close();
+  //                     }
+  //                 });
+  //             }
+  //         })
+  //     ]);
 }
