@@ -151,9 +151,11 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
 }
 
 function checkDownloadProgress(res) {
+  let  title1 = encodeURIComponent(title);
+
   var options = {
     method: "HEAD",
-    host: "./downloads/" + title + ".mkv",
+    host: "./downloads/" + title1 + ".mkv",
   };
   var req = https.request(options, function (resp) {
     console.log(JSON.stringify(resp.headers));
