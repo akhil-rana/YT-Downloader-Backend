@@ -10,8 +10,7 @@ const app = express();
 // const readline = require("readline-sync");
 const PORT = 8080;
 let title = null;
-let vdownloaded = false;
-let adownloaded = false;
+let downloaded = false;
 let vurl = null;
 let aur = null;
 
@@ -106,8 +105,7 @@ function showDetails(info, res) {
 function downloadFile(aurl, vurl, aformat, vformat, res) {
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
   let afile = fs.createWriteStream("./downloads/audio." + aformat);
-  vdownloaded = false;
-  adownloaded = false;
+  downloaded = false;
 
   res.send("Started");
   let vdown = new Promise(function (resolve, reject) {
@@ -138,8 +136,6 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
       })
       .on("end", function () {
         console.log("Processing finished !");
-        adownloadFile = true;
-        vdownloadFile = true;
 
         fs.unlink("./downloads/video." + vformat, (err) => {
           if (err) throw err;
@@ -160,23 +156,13 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
 
 function checkDownloadProgress(res) {
   let title1 = encodeURIComponent(title);
-
-  // var options = {
-  //   method: "HEAD",
-  //   host: vurl,
-  // };
-  // var req = https.request(options, function (resp) {
-  //   console.log(JSON.stringify(resp.headers));
-  //   res.send(JSON.stringify(resp.headers));
-  // });
   request(
     {
       url: vurl,
       method: "HEAD",
     },
     function (err, response, body) {
-      console.log(response.headers);
-      // process.exit(0);
+      console.log(response.headers.content-lenght);
     }
   );
 }
