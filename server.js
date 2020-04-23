@@ -111,6 +111,7 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
   res.send("Started");
   let vdown = new Promise(function (resolve, reject) {
     https.get(vurl, function (response) {
+      console.log(response);
       let vstream = response.pipe(vfile);
       vstream.on("finish", function () {
         resolve("vdone");
