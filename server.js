@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const ytdl = require("ytdl-core");
 const express = require("express");
+const request = require("request");
 const ffmpeg = require("fluent-ffmpeg");
 const app = express();
 // const readline = require("readline-sync");
@@ -28,8 +29,8 @@ app.post("/urlstart", (req, res) => {
 });
 
 app.post("/video", (req, res) => {
-   aurl = req.body.aurl;
-   vurl = req.body.vurl;
+  aurl = req.body.aurl;
+  vurl = req.body.vurl;
   let aformat = req.body.aformat;
   let vformat = req.body.vformat;
   downloadFile(aurl, vurl, aformat, vformat, res);
@@ -152,21 +153,30 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
         app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
         );
-
       })
       .save("./downloads/" + title + ".mkv");
   });
 }
 
 function checkDownloadProgress(res) {
-  let  title1 = encodeURIComponent(title);
+  let title1 = encodeURIComponent(title);
 
-  var options = {
-    method: "HEAD",
-    host: vurl,
-  };
-  var req = https.request(options, function (resp) {
-    console.log(JSON.stringify(resp.headers));
-    res.send(JSON.stringify(resp.headers));
-  });
+  // var options = {
+  //   method: "HEAD",
+  //   host: vurl,
+  // };
+  // var req = https.request(options, function (resp) {
+  //   console.log(JSON.stringify(resp.headers));
+  //   res.send(JSON.stringify(resp.headers));
+  // });
+  request(
+    {
+      url: vurl,
+      method: "HEAD",
+    },
+    function (err, response, body) {
+      console.log(response.headers);
+      // process.exit(0);
+    }
+  );
 }
