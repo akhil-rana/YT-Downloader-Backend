@@ -5,9 +5,8 @@ const fs = require("fs");
 const ytdl = require("ytdl-core");
 const express = require("express");
 const ffmpeg = require("fluent-ffmpeg");
-// const puppeteer = require("puppeteer");
 const app = express();
-const path = require("path");
+const readline = require("readline-sync");
 const PORT = 8080;
 let title = null;
 
@@ -18,11 +17,11 @@ app.use(bodyParser.json());
 // Serve only the static files form the dist directory
 app.use(express.static(__dirname + "/front"));
 
-app.get("/*", function (req, res) {
+app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname + "/front/index.html"));
 });
 
-app.listen(process.env.PORT || 8080, () =>
+var server = app.listen(process.env.PORT || 8080, () =>
   console.log("App listening on port " + PORT)
 );
 
@@ -31,12 +30,13 @@ app.post("/urlstart", (req, res) => {
   console.log(url);
   youtubeStart(url, res);
 });
+
 app.post("/video", (req, res) => {
   let aurl = req.body.aurl;
   let vurl = req.body.vurl;
   let aformat = req.body.aformat;
   let vformat = req.body.vformat;
-  //   downloadP(vurl);
+
   downloadFile(aurl, vurl, aformat, vformat, res);
 });
 
@@ -103,8 +103,8 @@ function showDetails(info, res) {
 }
 
 function downloadFile(aurl, vurl, aformat, vformat, res) {
-  let vfile = fs.createWriteStream("./video." + vformat);
-  let afile = fs.createWriteStream("./audio." + aformat);
+  let vfile = fs.createWriteStream("./downloads/video." + vformat);
+  let afile = fs.createWriteStream("./downloads/audio." + aformat);
 
   let vdown = new Promise(function (resolve, reject) {
     https.get(vurl, function (response) {
@@ -124,8 +124,8 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
   });
 
   Promise.all([vdown, adown]).then(function () {
-    ffmpeg("./video." + vformat)
-      .input("./audio." + aformat)
+    ffmpeg("./downloads/video." + vformat)
+      .input("./downloads/audio." + aformat)
       .audioCodec("copy")
       .videoCodec("copy")
       .on("error", function (err) {
@@ -133,20 +133,21 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
       })
       .on("end", function () {
         console.log("Processing finished !");
-        fs.unlink("./video." + vformat, (err) => {
+        fs.unlink("./downloads/video." + vformat, (err) => {
           if (err) throw err;
           console.log("Video file was deleted");
         });
-        fs.unlink("./audio." + aformat, (err) => {
+        fs.unlink("./downloads/audio." + aformat, (err) => {
           if (err) throw err;
           console.log("Audio file was deleted");
         });
         title1 = encodeURIComponent(title);
         app.get("/" + title1 + ".mkv", (req, res) =>
-          res.download("./" + title + ".mkv")
+          res.download("./downloads/" + title + ".mkv")
         );
-        res.send("Download from: " + "/" + title1 + ".mkv");
+        res.send("Download from: " + "/" + title1+ ".mkv");
       })
-      .save("./" + title + ".mkv");
+      .save("./downloads/" + title + ".mkv");
   });
 }
+
