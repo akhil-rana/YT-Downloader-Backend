@@ -10,10 +10,10 @@ const app = express();
 // const readline = require("readline-sync");
 const PORT = 8080;
 let title = null;
-let downloaded = false;
 let vurl = null;
-let aur = null;
-
+let aurl = null;
+let aformat = null;
+let vformat = null;
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -30,8 +30,8 @@ app.post("/urlstart", (req, res) => {
 app.post("/video", (req, res) => {
   aurl = req.body.aurl;
   vurl = req.body.vurl;
-  let aformat = req.body.aformat;
-  let vformat = req.body.vformat;
+  aformat = req.body.aformat;
+  vformat = req.body.vformat;
   downloadFile(aurl, vurl, aformat, vformat, res);
 });
 
@@ -102,10 +102,9 @@ function showDetails(info, res) {
   // downloadFile(title, url, formats, res);
 }
 
-function downloadFile(aurl, vurl, aformat, vformat, res) {
+function downloadFile(aurl, vurl, res) {
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
   let afile = fs.createWriteStream("./downloads/audio." + aformat);
-  downloaded = false;
 
   res.send("Started");
   let vdown = new Promise(function (resolve, reject) {
@@ -154,18 +153,9 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
 }
 
 function checkDownloadProgress(res) {
-  let title1 = encodeURIComponent(title);
-  request(
-    {
-      url: vurl,
-      method: "HEAD",
-      headers: {
-        'access-control-allow-origin': '*',
-        'access-control-expose-headers': 'access-control-allow-origin',
-      }
-    },
-    function (err, response, body) {
-      console.log(response.headers);
-    }
-  );
+  let stats1 = fs.statSync("./video." + vformat);
+  let stats2 = fs.statSync("./audio." + aformat);
+  let fileSizeInBytes = stats1.size + stats2.size;
+  console.log(fileSizeInBytes);
+  res.send(fileSizeInBytes);
 }
