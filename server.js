@@ -33,7 +33,7 @@ app.post("/video", (req, res) => {
 });
 
 app.post("/check", (req, res) => {
-  checkDownloadProgress();
+  checkDownloadProgress(res);
 });
 
 function youtubeStart(url, res) {
@@ -149,12 +149,13 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
   });
 }
 
-function checkDownloadProgress() {
+function checkDownloadProgress(res) {
   var options = {
     method: "HEAD",
     host: "./downloads/" + title + ".mkv",
   };
-  var req = https.request(options, function (res) {
-    console.log(JSON.stringify(res.headers));
+  var req = https.request(options, function (resp) {
+    console.log(JSON.stringify(resp.headers));
+    res.send(JSON.stringify(resp.headers));
   });
 }
