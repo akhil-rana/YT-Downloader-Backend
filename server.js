@@ -94,6 +94,7 @@ function showDetails(info, res) {
     aformats: aformats,
     vformats: vformats,
   };
+  console.log(result);
   res.send(result);
   // downloadFile(title, url, formats, res);
 }
