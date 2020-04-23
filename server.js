@@ -9,6 +9,7 @@ const app = express();
 // const readline = require("readline-sync");
 const PORT = 8080;
 let title = null;
+let downloaded = false;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -28,8 +29,11 @@ app.post("/video", (req, res) => {
   let vurl = req.body.vurl;
   let aformat = req.body.aformat;
   let vformat = req.body.vformat;
-
   downloadFile(aurl, vurl, aformat, vformat, res);
+});
+
+app.post("/check", (req, res) => {
+  checkDownloadProgress();
 });
 
 function youtubeStart(url, res) {
@@ -97,6 +101,7 @@ function showDetails(info, res) {
 function downloadFile(aurl, vurl, aformat, vformat, res) {
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
   let afile = fs.createWriteStream("./downloads/audio." + aformat);
+  downloaded = false;
 
   let vdown = new Promise(function (resolve, reject) {
     https.get(vurl, function (response) {
@@ -125,6 +130,7 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
       })
       .on("end", function () {
         console.log("Processing finished !");
+        downloadFile = true;
         fs.unlink("./downloads/video." + vformat, (err) => {
           if (err) throw err;
           console.log("Video file was deleted");
@@ -137,9 +143,18 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
         app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
         );
-        res.send("/download/" + title1+ ".mkv");
+        res.send("/download/" + title1 + ".mkv");
       })
       .save("./downloads/" + title + ".mkv");
   });
 }
 
+function checkDownloadProgress() {
+  var options = {
+    method: "HEAD",
+    host: "./downloads/" + title + ".mkv",
+  };
+  var req = https.request(options, function (res) {
+    console.log(JSON.stringify(res.headers));
+  });
+}
