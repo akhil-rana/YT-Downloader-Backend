@@ -103,8 +103,8 @@ function showDetails(info, res) {
 }
 
 function downloadFile(aurl, vurl, aformat, vformat, res) {
-  let vfile = fs.createWriteStream("./downloads/video." + vformat);
-  let afile = fs.createWriteStream("./downloads/audio." + aformat);
+  let vfile = fs.createWriteStream("./video." + vformat);
+  let afile = fs.createWriteStream("./audio." + aformat);
 
   let vdown = new Promise(function (resolve, reject) {
     https.get(vurl, function (response) {
@@ -124,8 +124,8 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
   });
 
   Promise.all([vdown, adown]).then(function () {
-    ffmpeg("./downloads/video." + vformat)
-      .input("./downloads/audio." + aformat)
+    ffmpeg("./video." + vformat)
+      .input("./audio." + aformat)
       .audioCodec("copy")
       .videoCodec("copy")
       .on("error", function (err) {
@@ -133,20 +133,20 @@ function downloadFile(aurl, vurl, aformat, vformat, res) {
       })
       .on("end", function () {
         console.log("Processing finished !");
-        fs.unlink("./downloads/video." + vformat, (err) => {
+        fs.unlink("./video." + vformat, (err) => {
           if (err) throw err;
           console.log("Video file was deleted");
         });
-        fs.unlink("./downloads/audio." + aformat, (err) => {
+        fs.unlink("./audio." + aformat, (err) => {
           if (err) throw err;
           console.log("Audio file was deleted");
         });
         title1 = encodeURIComponent(title);
         app.get("/" + title1 + ".mkv", (req, res) =>
-          res.download("./downloads/" + title + ".mkv")
+          res.download("./" + title + ".mkv")
         );
         res.send("Download from: " + "/" + title1 + ".mkv");
       })
-      .save("./downloads/" + title + ".mkv");
+      .save("./" + title + ".mkv");
   });
 }
