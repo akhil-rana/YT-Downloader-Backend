@@ -7,18 +7,20 @@ const express = require("express");
 const request = require("request");
 const ffmpeg = require("fluent-ffmpeg");
 const app = express();
-// const readline = require("readline-sync");
-const PORT = 8080;
+const PORT = 8081;
+
 let title = null;
 let vurl = null;
 let aurl = null;
 let aformat = null;
 let vformat = null;
+let complete = false;
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var server = app.listen(process.env.PORT || 8080, () =>
+var server = app.listen(process.env.PORT || 8081, () =>
   console.log("App listening on port " + PORT)
 );
 app.post("/urlstart", (req, res) => {
@@ -35,8 +37,8 @@ app.post("/video", (req, res) => {
   downloadFile(aurl, vurl, res);
 });
 
-app.get("/check", (req, res) => {
-  checkDownloadProgress(res);
+app.post("/check", (req, res) => {
+  res.send(complete);
 });
 
 function youtubeStart(url, res) {
@@ -103,14 +105,7 @@ function showDetails(info, res) {
 }
 
 function downloadFile(aurl, vurl, res) {
-  fs.unlink("./downloads/video." + vformat, (err) => {
-    if (err) throw err;
-    console.log("Video file was deleted");
-  });
-  fs.unlink("./downloads/audio." + aformat, (err) => {
-    if (err) throw err;
-    console.log("Audio file was deleted");
-  });
+  complete = false;
   let vfile = fs.createWriteStream("./downloads/video." + vformat);
   let afile = fs.createWriteStream("./downloads/audio." + aformat);
 
@@ -142,7 +137,8 @@ function downloadFile(aurl, vurl, res) {
       })
       .on("end", function () {
         console.log("Processing finished !");
-
+        complete = true;
+        deleteFiles();
         title1 = encodeURIComponent(title);
         app.get("/download/" + title1 + ".mkv", (req, res) =>
           res.download("./downloads/" + title + ".mkv")
@@ -152,10 +148,22 @@ function downloadFile(aurl, vurl, res) {
   });
 }
 
-function checkDownloadProgress(res) {
-  let stats1 = fs.statSync("./video." + vformat);
-  let stats2 = fs.statSync("./audio." + aformat);
-  let fileSizeInBytes = stats1.size + stats2.size;
-  console.log(fileSizeInBytes);
-  res.send(fileSizeInBytes);
+
+function deleteFiles(){
+  fs.stat("./downloads/video." + vformat, function (err, stat) {
+    if (err == null) {
+      fs.unlink("./downloads/video." + vformat, (err) => {
+        if (err) throw err;
+        console.log("old video file was deleted");
+      });
+    }
+  });
+  fs.stat("./downloads/audio." + aformat, function (err, stat) {
+    if (err == null) {
+      fs.unlink("./downloads/audio." + aformat, (err) => {
+        if (err) throw err;
+        console.log("old audio file was deleted");
+      });
+    }
+  });
 }
