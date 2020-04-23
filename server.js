@@ -161,7 +161,7 @@ function checkDownloadProgress(res) {
       method: "HEAD",
     },
     function (err, response, body) {
-      console.log(response.headers['content-length']);
+      console.log(response.headers);
     }
   );
 }
