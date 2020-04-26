@@ -207,6 +207,7 @@ function joinAandV() {
         // console.log("old audio file was deleted");
       });
       title1 = encodeURIComponent(title);
+      title1 = escape(title1);
       app.get("/download/" + title1 + ".mkv", (req, res) =>
         res.download("./downloads/" + title + ".mkv")
       );
