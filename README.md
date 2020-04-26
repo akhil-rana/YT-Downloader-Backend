@@ -7,7 +7,7 @@ A nodeJS utility for dowloading youtube videos using [ytdl-core](https://github.
 
 ## To run:
 - `npm install`
-- `npm start`
+- `npm start` or `node server.js`
 
 ## Requirements
 - [NodeJS (npm)](https://nodejs.org/en/)
