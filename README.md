@@ -12,7 +12,7 @@ A nodeJS utility for dowloading youtube videos using [ytdl-core](https://github.
 ## Requirements
 - [NodeJS (npm)](https://nodejs.org/en/)
 - [ffmpeg](https://ffmpeg.org/download.html)
-- Any linux OS
+- Any linux based OS/server
 
 ### This can be used with the [Frontend](https://github.com/akhil-rana/youtubedl)
 
