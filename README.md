@@ -5,7 +5,7 @@ A nodeJS utility for dowloading youtube videos using [ytdl-core](https://github.
 - Allowing all the formats/codecs available for doowload with any audio customisation.
 - Audio and Video are combined on the server using ffmpeg (required to be installed on the machine).
 
-# To start server:
+## To start server:
 - `npm install`
 - `npm start` or `node server.js`
 
