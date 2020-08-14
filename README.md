@@ -16,4 +16,4 @@ A nodeJS utility for downloading youtube videos using [ytdl-core](https://github
 
 ### This can be used with the [Frontend](https://github.com/akhil-rana/youtubedl)
 
-Try the hosted version [here](http://akhilrana.me/youtubedl) (Please don't abuse)
+Try the hosted version [here](https://akhil-rana.github.io/youtubedl) (Please don't abuse)
