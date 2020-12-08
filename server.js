@@ -8,7 +8,7 @@ const { exec } = require("child_process");
 const request = require("request");
 const ffmpeg = require("fluent-ffmpeg");
 const app = express();
-const PORT = 8081;
+const PORT = 8080;
 
 let chunks = 40;
 let title = null;
@@ -26,7 +26,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var server = app.listen(process.env.PORT || 8081, () =>
+var server = app.listen(process.env.PORT || 8080, () =>
   console.log("App listening on port " + PORT)
 );
 app.post("/urlstart", (req, res) => {
